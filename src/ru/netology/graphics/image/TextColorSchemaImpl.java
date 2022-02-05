@@ -18,8 +18,8 @@ public class TextColorSchemaImpl implements TextColorSchema {
         for (int i = 31; i < 61; i++) data.put(i, '$');
         for (int i = 61; i < 91; i++) data.put(i, '@');
         for (int i = 91; i < 121; i++) data.put(i, '%');
-        for (int i = 121; i < 151; i++) data.put(i, '*');
-        for (int i = 151; i < 181; i++) data.put(i, '+');
+        for (int i = 121; i < 151; i++) data.put(i, '+');
+        for (int i = 151; i < 181; i++) data.put(i, '*');
         for (int i = 181; i < 211; i++) data.put(i, '-');
         for (int i = 211; i < 300; i++) data.put(i, '.');
         return data.get(color);

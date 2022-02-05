@@ -1,5 +1,7 @@
 package ru.netology.graphics;
 
+import ru.netology.graphics.image.TextColorSchema;
+import ru.netology.graphics.image.TextColorSchemaImpl;
 import ru.netology.graphics.image.TextGraphicsConverter;
 import ru.netology.graphics.image.TextGraphicsConverterImpl;
 import ru.netology.graphics.server.GServer;
@@ -7,11 +9,12 @@ import ru.netology.graphics.server.GServer;
 public class Main {
     public static void main(String[] args) throws Exception {
         TextGraphicsConverter converter = new TextGraphicsConverterImpl(); // Создайте тут
+        TextColorSchema schema = new TextColorSchemaImpl(); //тут задаем кто реализует интерфейс перевода в символы
         // вкл -откл ограничения
-        converter.setMaxWidth(300);
-        converter.setTextColorSchema(GJLNDTH:LF>);
-//      converter.setMaxHeight(1000);
+//        converter.setMaxWidth(200);
+//        converter.setMaxHeight(1000);
 //      converter.setMaxRatio(2);
+        converter.setTextColorSchema(schema);
 
         // объект вашего класса конвертера
 

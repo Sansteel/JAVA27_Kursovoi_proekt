@@ -9,20 +9,25 @@ import java.net.URL;
 
 public class TextGraphicsConverterImpl implements TextGraphicsConverter {
     private int width;
+    private int maxWidth;
     private int height;
+    private int maxHeight;
     private double maxRatio = Double.MAX_VALUE;
-
+    private TextColorSchema schema;
 
     @Override
     public String convert(String url) throws IOException, BadImageSizeException {
 
+        System.out.println("width = " + width );
+        System.out.println("maxWidth =" + maxWidth);
+        System.out.println("maxRatio = "+ maxRatio);
         // Вот так просто мы скачаем картинку из интернета :)
         BufferedImage img = ImageIO.read(new URL(url));
 
         // вместо конструктора определяем параметры экземпляра
         this.width = img.getWidth();
         this.height = img.getHeight();
-        double ratio = (double) img.getWidth() / img.getHeight();
+        double ratio = (double) this.width / this.height;
 
         // Если конвертер попросили проверять на максимально допустимое
         // соотношение сторон изображения, то вам здесь надо сделать эту проверку,
@@ -40,7 +45,22 @@ public class TextGraphicsConverterImpl implements TextGraphicsConverter {
         // будет 100x10 (в 1.5 раза меньше).
         // Подумайте, какими действиями можно вычислить новые размеры.
         // Не получается? Спросите вашего руководителя по курсовой, поможем!
-        //todo у меня реализовано в методах setMax...
+
+        double widthCompression = (double) width / maxWidth;
+        if (width > maxWidth) {
+            width = (int) (width / widthCompression);
+            height = (int) (height / widthCompression);
+            System.out.println("Исходное изображение уменьешно в " + widthCompression);
+        }
+
+        double heightCompression = (double) height / maxHeight;
+        // аналогично методу setMaxWidth
+        if (height > maxHeight) {
+            width = (int) (width / heightCompression);
+            height = (int) (height / heightCompression);
+            System.out.println("Исходное изображение уменьешно в " + heightCompression);
+        }
+
         int newWidth = width;
         int newHeight = height;
         ratio = (double) newWidth / newHeight;
@@ -99,7 +119,7 @@ public class TextGraphicsConverterImpl implements TextGraphicsConverter {
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 int color = bwRaster.getPixel(w, h, new int[3])[0];
-                char c = setTextColorSchema(schema).convert(color);
+                char c = schema.convert(color);
                 result.append(c);
                 result.append(" "); // поправка чтобы изобр стало более широким
             }
@@ -116,37 +136,21 @@ public class TextGraphicsConverterImpl implements TextGraphicsConverter {
 
     @Override
     public void setMaxWidth(int widthM) {
-        int maxWidth = (widthM > 0) ? widthM : Integer.MAX_VALUE;
-        double widthCompression = (double) width / maxWidth;
-        //Менеджеру могли выставить максимальные ширину и высоту итоговой картинки,
-        //при этом если исходная картинка больше, то нам надо уменьшить её размер, соблюдая пропорции;
-        if (width > maxWidth) {
-            width = (int) (width / widthCompression);
-            height = (int) (height / widthCompression);
-            System.out.println("Исходное изобьражение уменьешно в " + widthCompression);
-        }
+        maxWidth = (widthM > 0) ? widthM : Integer.MAX_VALUE;
     }
 
     @Override
     public void setMaxHeight(int heightM) {
-        int maxHeight = (heightM > 0) ? heightM : Integer.MAX_VALUE;
-        double heightCompression = (double) height / maxHeight;
-        // аналогично методу setMaxWidth
-        if (height > maxHeight) {
-            width = (int) (width / heightCompression);
-            height = (int) (height / heightCompression);
-            System.out.println("Исходное изобьражение уменьешно в " + heightCompression);
-        }
+        maxHeight = (heightM > 0) ? heightM : Integer.MAX_VALUE;
     }
 
     @Override
     public void setMaxRatio(double maxRatio) {
         this.maxRatio = maxRatio;
-        // чек делается в методе convert
     }
 
     @Override
     public void setTextColorSchema(TextColorSchema schema) {
-        schema = new TextColorSchemaImpl();
+        this.schema = schema;
     }
 }
